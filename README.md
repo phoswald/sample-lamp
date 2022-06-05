@@ -1,45 +1,46 @@
 
-# sample-php
+# sample-lamp
 
-## Apache mit PHP
+## Database (Maria DB)
+
+Links:
+
+- https://hub.docker.com/_/mariadb
+- https://mariadb.com/kb/en/mysql-command-line-client/
 
 ~~~
-$ docker build -t php-mysql:7.2-apache .
-$ docker run -d -p 8080:80 --name myphp --rm \
-  -v "$(pwd)/html:/var/www/html:ro" \
-  php-mysql:7.2-apache
+$ docker network create backend
+
+$ mkdir data
+$ chmod 777 data
+$ docker run -d --name sample-mariadb --rm \
+  --network backend \
+  -v "$(pwd)/data:/var/lib/mysql" \
+  -e MARIADB_ROOT_PASSWORD=sesam \
+  -e MARIADB_DATABASE=sample \
+  -e MARIADB_USER=sample \
+  -e MARIADB_PASSWORD=sesam \
+  mariadb:10.8
+
+$ docker exec -i  sample-mariadb mariadb --database=sample --user=sample --password=sesam < database/create-schema.sql
+$ docker exec -i  sample-mariadb mariadb --database=sample --user=sample --password=sesam < database/insert-data.sql
+$ docker exec -it sample-mariadb mariadb --database=sample --user=sample --password=sesam
 ~~~
+
+## Website (Apache, PHP)
+
+~~~
+$ docker build -t sample-php:7.2-apache website/
+$ docker run -d --name sample-php --rm \
+  --network backend \
+  -p 8080:80 \
+  -v "$(pwd)/website/html:/var/www/html:ro" \
+  sample-php:7.2-apache
+~~~
+
+Das Tag (`7.2-apache`) sollte mit demjenigen des Base Image (`php`) übereinstimmen.
 
 URLs:
 
 - http://localhost:8080/sample.php
 - http://localhost:8080/sample.php?command=insert&key=xxx&val=yyy
-
-## Maria DB
-
-Links:
-
-- https://hub.docker.com/_/mariadb
-
-~~~
-$ docker run -d --name mymaria --rm \
-  -p 3306:3306 \
-  -v "${HOME}/volumes/mariadb:/var/lib/mysql" \
-  -e MARIADB_ROOT_PASSWORD=1234 \
-  mariadb:latest
-
-$ docker exec -it mymaria mariadb --user root -p1234
-~~~
-
-~~~
-create database sample_db;
-use sample_db;
-create table sample_table(
-  sample_key varchar(100) not null,
-  sample_val varchar(100) not null,
-  primary key (sample_key)
-);
-insert into sample_table (sample_key, sample_val) values ('key1', 'val1');
-insert into sample_table (sample_key, sample_val) values ('key2', 'val2');
-select * from sample_table;
-~~~
