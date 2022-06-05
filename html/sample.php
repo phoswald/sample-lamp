@@ -10,6 +10,40 @@
 <body>
     <h1>sample-php (PHP)</h1>
     <p><?php echo "Die aktuelle Zeit ist " . date("Y/m/d H:i:s") . " (UTC)."; ?></p>
-    <h2>Info</h2>
-    <p><?php phpinfo(); ?></p>
+    <h2>Datenbank</h2>
+    <?php
+        $dbhost = '192.168.1.118:3306';
+        $dbuser = 'root';
+        $dbpass = '1234';
+    ?>
+    <?php
+        if($_GET["command"] == "insert") {
+            $key = $_GET["key"];
+            $val = $_GET["val"];
+            $db = mysqli_connect($dbhost, $dbuser, $dbpass) or die('Error connecting to MySQL server.');
+            $sql = "INSERT INTO sample_db.sample_table (sample_key, sample_val) VALUES ('" . $key . "', '" . $val . "')";
+            mysqli_query($db, $sql) or die('Error inserting into database.');
+            mysqli_close($db);
+        }
+        ?>
+    <table>
+        <tr>
+            <th>Key</th>
+            <th>Value</th>
+        </tr>
+        <?php
+            $db = mysqli_connect($dbhost, $dbuser, $dbpass) or die('Error connecting to MySQL server.');
+
+            $sql = "SELECT sample_key, sample_val FROM sample_db.sample_table";
+            mysqli_query($db, $sql) or die('Error querying database.');
+
+            $result = mysqli_query($db, $sql);
+
+            while ($row = mysqli_fetch_array($result)) {
+                echo '<tr><td>' . $row['sample_key'] . '</td><td>' . $row['sample_val'] . '</td></tr>';
+            }
+
+            mysqli_close($db);
+        ?>
+    </table>
 </body>
