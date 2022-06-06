@@ -52,10 +52,10 @@
               echo '<td>';
               echo '  <input type="checkbox" name="done" ' . ($done == '1' ? 'checked' : '') . ' disabled>';
               echo '</td>';
-              echo '<td>' . $title . '</td>';
-              echo '<td>' . $timestamp . '</td>';
+              echo '<td>' . htmlspecialchars($title) . '</td>';
+              echo '<td>' . htmlspecialchars($timestamp) . '</td>';
               echo '<td>';
-              echo '  <a class="btn btn-secondary btn-sm btn-block" href="task.php?taskid=' . $taskid . '">Details</a>';
+              echo '  <a class="btn btn-secondary btn-sm btn-block" href="task.php?taskid=' . htmlspecialchars($taskid) . '">Details</a>';
               echo '</td>';
               echo '</tr>';
             }

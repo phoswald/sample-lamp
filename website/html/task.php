@@ -39,24 +39,24 @@
     <div class="container" style="max-width: 960px">
       <h2 class="my-4">Task Details</h2>
       <p>
-        <?php echo '<a class="btn btn-secondary btn-sm" href="taskedit.php?taskid=' . $taskid . '">Edit</a>' ?>
+        <?php echo '<a class="btn btn-secondary btn-sm" href="taskedit.php?taskid=' . htmlspecialchars($taskid) . '">Edit</a>' ?>
       </p>
       <table class="table my-4">
         <tr>
           <th>ID</th>
-          <td><?php echo $taskid ?></td>
+          <td><?php echo htmlspecialchars($taskid) ?></td>
         </tr>
         <tr>
           <th>Updated</th>
-          <td><?php echo $timestamp ?></td>
+          <td><?php echo htmlspecialchars($timestamp) ?></td>
         </tr>
         <tr>
           <th>Title</th>
-          <td><?php echo $title ?></td>
+          <td><?php echo htmlspecialchars($title) ?></td>
         </tr>
         <tr>
           <th>Description</th>
-          <td><pre><?php echo $description ?></pre></td>
+          <td><pre><?php echo htmlspecialchars($description) ?></pre></td>
         </tr>
         <tr>
           <th></th>

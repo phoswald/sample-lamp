@@ -60,24 +60,24 @@
     <div class="container" style="max-width: 960px">
       <h2 class="my-4">Edit Task Details</h2>
       <p>
-        <?php echo '<a class="btn btn-secondary btn-sm" href="task.php?taskid=' . $taskid . '">Cancel</a>' ?>
+        <?php echo '<a class="btn btn-secondary btn-sm" href="task.php?taskid=' . htmlspecialchars($taskid) . '">Cancel</a>' ?>
       </p>
       <form action="#" method="post">
         <div class="form-group mt-4">
           <label for="id">ID:</label>
-          <?php echo '<input type="text" class="form-control" id="id" name="id" value="' . $taskid . '" disabled="disabled">' ?>
+          <?php echo '<input type="text" class="form-control" id="id" name="id" value="' . htmlspecialchars($taskid) . '" disabled="disabled">' ?>
         </div>
         <div class="form-group">
           <label for="timestamp">Updated:</label>
-          <?php echo '<input type="text" class="form-control" id="timestamp" name="timestamp" value="' . $timestamp . '" disabled="disabled">' ?>
+          <?php echo '<input type="text" class="form-control" id="timestamp" name="timestamp" value="' . htmlspecialchars($timestamp) . '" disabled="disabled">' ?>
         </div>
         <div class="form-group">
           <label for="title">Title:</label>
-          <?php echo '<input type="text" class="form-control" id="title" name="title" value="' . $title . '">' ?>
+          <?php echo '<input type="text" class="form-control" id="title" name="title" value="' . htmlspecialchars($title) . '">' ?>
         </div>
         <div class="form-group">
           <label for="description">Description:</label>
-          <textarea class="form-control" id="description" name="description" rows="5"><?php echo $description ?></textarea>
+          <textarea class="form-control" id="description" name="description" rows="5"><?php echo htmlspecialchars($description) ?></textarea>
         </div>
         <div class="form-group custom-control">
           <?php echo '<input type="checkbox" class="custom-control-input" id="done" name="done" ' . ($done == '1' ? 'checked' : '') . '>' ?>
