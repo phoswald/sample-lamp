@@ -2,18 +2,17 @@
   $dbhost = 'sample-mariadb:3306';
   $dbuser = 'sample';
   $dbpass = 'sesam';
-  $db = mysqli_connect($dbhost, $dbuser, $dbpass) or die('Error connecting to MySQL server.');
+  $dbname = 'sample';
+  $db = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname) or die('Error connecting to MySQL server.');
 ?>
 <?php
   $taskid = $_GET["taskid"];
-  $sql = "SELECT TASK_ID, DESCRIPTION, DONE, TIMESTAMP, TITLE, USER_ID ". 
-         "FROM sample.TASK WHERE TASK_ID='" . $taskid . "'";
-  $result = mysqli_query($db, $sql);
-  $row = mysqli_fetch_array($result);
-  $timestamp = $row['TIMESTAMP'];
-  $title = $row['TITLE'];
-  $description = $row['DESCRIPTION'];
-  $checked = ($row['DONE'] == '1' ? 'checked' : '');
+  $dbstmt = mysqli_prepare($db, "SELECT TIMESTAMP, TITLE, DESCRIPTION, DONE, USER_ID FROM TASK WHERE TASK_ID=?");
+  mysqli_stmt_bind_param($dbstmt, "s", $taskid);
+  mysqli_stmt_execute($dbstmt);
+  mysqli_stmt_bind_result($dbstmt, $timestamp, $title, $description, $done, $userid);
+  mysqli_stmt_fetch($dbstmt) or die('Error querying database.');
+  mysqli_stmt_close($dbstmt);
 ?>
 <!doctype html>
 <html lang="en">
@@ -61,7 +60,7 @@
         </tr>
         <tr>
           <th></th>
-          <td><?php echo '<input type="checkbox" name="done" ' . $checked . ' disabled>' ?>Done</td>
+          <td><?php echo '<input type="checkbox" name="done" ' . ($done == '1' ? 'checked' : '') . ' disabled>' ?>Done</td>
         </tr>
       </table>
     </div>

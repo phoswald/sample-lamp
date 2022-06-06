@@ -2,14 +2,16 @@
   $dbhost = 'sample-mariadb:3306';
   $dbuser = 'sample';
   $dbpass = 'sesam';
-  $db = mysqli_connect($dbhost, $dbuser, $dbpass) or die('Error connecting to MySQL server.');
+  $dbname = 'sample';
+  $db = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname) or die('Error connecting to MySQL server.');
 ?>
 <?php
   if($_POST["action"] == "create") {
     $title = $_POST["title"];
-    $sql = "INSERT INTO sample.TASK (TASK_ID, DESCRIPTION, DONE, TIMESTAMP, TITLE, USER_ID) " . 
-           "SELECT UUID(), NULL, FALSE, CURRENT_TIMESTAMP(), '" . $title . "', 'guest'";
-    mysqli_query($db, $sql) or die('Error inserting into database.');
+    $dbstmt = mysqli_prepare($db, "INSERT INTO TASK (TASK_ID, DESCRIPTION, DONE, TIMESTAMP, TITLE, USER_ID) SELECT UUID(), NULL, FALSE, CURRENT_TIMESTAMP(), ?, 'guest'");
+    mysqli_stmt_bind_param($dbstmt, "s", $title);
+    mysqli_stmt_execute($dbstmt) or die('Error inserting into database.');
+    mysqli_stmt_close($dbstmt);
   }
 ?>
 <!doctype html>
@@ -42,22 +44,22 @@
             <th></th>
           </tr>
           <?php
-            $sql = "SELECT TASK_ID, DESCRIPTION, DONE, TIMESTAMP, TITLE, USER_ID ". 
-                   "FROM sample.TASK ORDER BY TIMESTAMP DESC";
-            $result = mysqli_query($db, $sql);
-            while ($row = mysqli_fetch_array($result)) {
-              $checked = ($row['DONE'] == '1' ? 'checked' : '');
+            $dbstmt = mysqli_prepare($db, "SELECT TASK_ID, TIMESTAMP, TITLE, DESCRIPTION, DONE, USER_ID FROM TASK ORDER BY TIMESTAMP DESC");
+            mysqli_stmt_execute($dbstmt);
+            mysqli_stmt_bind_result($dbstmt, $taskid, $timestamp, $title, $description, $done, $userid);
+            while (mysqli_stmt_fetch($dbstmt)) {
               echo '<tr>';
               echo '<td>';
-              echo '  <input type="checkbox" name="done" ' . $checked . ' disabled>';
+              echo '  <input type="checkbox" name="done" ' . ($done == '1' ? 'checked' : '') . ' disabled>';
               echo '</td>';
-              echo '<td>' . $row['TITLE'] . '</td>';
-              echo '<td>' . $row['TIMESTAMP'] . '</td>';
+              echo '<td>' . $title . '</td>';
+              echo '<td>' . $timestamp . '</td>';
               echo '<td>';
-              echo '  <a class="btn btn-secondary btn-sm btn-block" href="task.php?taskid=' . $row['TASK_ID'] . '">Details</a>';
+              echo '  <a class="btn btn-secondary btn-sm btn-block" href="task.php?taskid=' . $taskid . '">Details</a>';
               echo '</td>';
               echo '</tr>';
             }
+            mysqli_stmt_close($dbstmt);
           ?>
           <tr>
             <td></td>

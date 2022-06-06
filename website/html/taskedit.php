@@ -2,7 +2,8 @@
   $dbhost = 'sample-mariadb:3306';
   $dbuser = 'sample';
   $dbpass = 'sesam';
-  $db = mysqli_connect($dbhost, $dbuser, $dbpass) or die('Error connecting to MySQL server.');
+  $dbname = 'sample';
+  $db = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname) or die('Error connecting to MySQL server.');
 ?>
 <?php
   if($_POST["action"] == "store") {
@@ -10,27 +11,29 @@
     $title = $_POST["title"];
     $description = $_POST["description"];
     $done = $_POST["done"] == "on" ? 1 : 0;
-    $sql = "UPDATE sample.TASK SET TIMESTAMP=CURRENT_TIMESTAMP(), TITLE='" . $title . "', DESCRIPTION='" . $description . "', DONE=" . $done . " WHERE TASK_ID='" . $taskid . "'";
-    mysqli_query($db, $sql) or die('Error updating database.');
+    $dbstmt = mysqli_prepare($db, "UPDATE TASK SET TIMESTAMP=CURRENT_TIMESTAMP(), TITLE=?, DESCRIPTION=?, DONE=? WHERE TASK_ID=?");
+    mysqli_stmt_bind_param($dbstmt, "ssis", $title, $description, $done, $taskid);
+    mysqli_stmt_execute($dbstmt) or die('Error updating database.');
+    mysqli_stmt_close($dbstmt);
   }
   if($_POST["action"] == "delete") {
     $taskid = $_GET["taskid"];
-    $sql = "DELETE FROM sample.TASK WHERE TASK_ID='" . $taskid . "'";
-    mysqli_query($db, $sql) or die('Error deleting from database.');
+    $dbstmt = mysqli_prepare($db, "DELETE FROM TASK WHERE TASK_ID=?");
+    mysqli_stmt_bind_param($dbstmt, "s", $taskid);
+    mysqli_stmt_execute($dbstmt) or die('Error deleting from database.');
+    mysqli_stmt_close($dbstmt);
     header('Location: /tasks.php', true, 301);
     exit;
   }
 ?>
 <?php
   $taskid = $_GET["taskid"];
-  $sql = "SELECT TASK_ID, DESCRIPTION, DONE, TIMESTAMP, TITLE, USER_ID ". 
-         "FROM sample.TASK WHERE TASK_ID='" . $taskid . "'";
-  $result = mysqli_query($db, $sql);
-  $row = mysqli_fetch_array($result);
-  $timestamp = $row['TIMESTAMP'];
-  $title = $row['TITLE'];
-  $description = $row['DESCRIPTION'];
-  $checked = ($row['DONE'] == '1' ? 'checked' : '');
+  $dbstmt = mysqli_prepare($db, "SELECT TIMESTAMP, TITLE, DESCRIPTION, DONE, USER_ID FROM TASK WHERE TASK_ID=?");
+  mysqli_stmt_bind_param($dbstmt, "s", $taskid);
+  mysqli_stmt_execute($dbstmt);
+  mysqli_stmt_bind_result($dbstmt, $timestamp, $title, $description, $done, $userid);
+  mysqli_stmt_fetch($dbstmt) or die('Error querying database.');
+  mysqli_stmt_close($dbstmt);
 ?>
 <!doctype html>
 <html lang="en">
@@ -77,7 +80,7 @@
           <textarea class="form-control" id="description" name="description" rows="5"><?php echo $description ?></textarea>
         </div>
         <div class="form-group custom-control">
-          <?php echo '<input type="checkbox" class="custom-control-input" id="done" name="done" ' . $checked . '>' ?>
+          <?php echo '<input type="checkbox" class="custom-control-input" id="done" name="done" ' . ($done == '1' ? 'checked' : '') . '>' ?>
           <label class="custom-control-label" for="done">Done</label>
         </div>
         <p>
