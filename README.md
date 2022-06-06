@@ -7,6 +7,7 @@ Links:
 
 - https://hub.docker.com/_/mariadb
 - https://mariadb.com/kb/en/mysql-command-line-client/
+- https://mariadb.com/kb/en/data-types/
 
 ~~~
 $ docker network create backend
