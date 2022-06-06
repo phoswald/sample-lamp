@@ -65,11 +65,11 @@
       <form action="#" method="post">
         <div class="form-group mt-4">
           <label for="id">ID:</label>
-          <?php echo '<input type="text" class="form-control" id="id" name="id" value="' . htmlspecialchars($taskid) . '" disabled="disabled">' ?>
+          <?php echo '<input type="text" class="form-control" id="id" name="id" value="' . htmlspecialchars($taskid) . '" disabled>' ?>
         </div>
         <div class="form-group">
           <label for="timestamp">Updated:</label>
-          <?php echo '<input type="text" class="form-control" id="timestamp" name="timestamp" value="' . htmlspecialchars($timestamp) . '" disabled="disabled">' ?>
+          <?php echo '<input type="text" class="form-control" id="timestamp" name="timestamp" value="' . htmlspecialchars($timestamp) . '" disabled>' ?>
         </div>
         <div class="form-group">
           <label for="title">Title:</label>
