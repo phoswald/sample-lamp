@@ -1,6 +1,8 @@
 
 # sample-lamp
 
+Experiments with Linux, Apache, MySQL, PHP
+
 ## Database (Maria DB)
 
 Links:
@@ -43,5 +45,4 @@ Das Tag (`7.2-apache`) sollte mit demjenigen des Base Image (`php`) übereinstim
 
 URLs:
 
-- http://localhost:8080/sample.php
-- http://localhost:8080/sample.php?command=insert&key=xxx&val=yyy
+- http://localhost:8080/
