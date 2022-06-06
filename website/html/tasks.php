@@ -8,7 +8,7 @@
 <?php
   if($_POST["action"] == "create") {
     $title = $_POST["title"];
-    $dbstmt = mysqli_prepare($db, "INSERT INTO TASK (TASK_ID, DESCRIPTION, DONE, TIMESTAMP, TITLE, USER_ID) SELECT UUID(), NULL, FALSE, CURRENT_TIMESTAMP(), ?, 'guest'");
+    $dbstmt = mysqli_prepare($db, "INSERT INTO TASK (TASK_ID, USER_ID, TIMESTAMP, TITLE) SELECT UUID(), 'guest', CURRENT_TIMESTAMP(), ?");
     mysqli_stmt_bind_param($dbstmt, "s", $title);
     mysqli_stmt_execute($dbstmt) or die('Error inserting into database.');
     mysqli_stmt_close($dbstmt);
@@ -44,9 +44,9 @@
             <th></th>
           </tr>
           <?php
-            $dbstmt = mysqli_prepare($db, "SELECT TASK_ID, TIMESTAMP, TITLE, DESCRIPTION, DONE, USER_ID FROM TASK ORDER BY TIMESTAMP DESC");
+            $dbstmt = mysqli_prepare($db, "SELECT TASK_ID, TIMESTAMP, TITLE, DONE FROM TASK ORDER BY TIMESTAMP DESC");
             mysqli_stmt_execute($dbstmt);
-            mysqli_stmt_bind_result($dbstmt, $taskid, $timestamp, $title, $description, $done, $userid);
+            mysqli_stmt_bind_result($dbstmt, $taskid, $timestamp, $title, $done);
             while (mysqli_stmt_fetch($dbstmt)) {
               echo '<tr>';
               echo '<td>';

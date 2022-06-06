@@ -28,10 +28,10 @@
 ?>
 <?php
   $taskid = $_GET["taskid"];
-  $dbstmt = mysqli_prepare($db, "SELECT TIMESTAMP, TITLE, DESCRIPTION, DONE, USER_ID FROM TASK WHERE TASK_ID=?");
+  $dbstmt = mysqli_prepare($db, "SELECT USER_ID, TIMESTAMP, TITLE, DESCRIPTION, DONE FROM TASK WHERE TASK_ID=?");
   mysqli_stmt_bind_param($dbstmt, "s", $taskid);
   mysqli_stmt_execute($dbstmt);
-  mysqli_stmt_bind_result($dbstmt, $timestamp, $title, $description, $done, $userid);
+  mysqli_stmt_bind_result($dbstmt, $userid, $timestamp, $title, $description, $done);
   mysqli_stmt_fetch($dbstmt) or die('Error querying database.');
   mysqli_stmt_close($dbstmt);
 ?>
@@ -64,8 +64,12 @@
       </p>
       <form action="#" method="post">
         <div class="form-group mt-4">
-          <label for="id">ID:</label>
-          <?php echo '<input type="text" class="form-control" id="id" name="id" value="' . htmlspecialchars($taskid) . '" disabled>' ?>
+          <label for="taskid">TaskId:</label>
+          <?php echo '<input type="text" class="form-control" id="taskid" name="taskid" value="' . htmlspecialchars($taskid) . '" disabled>' ?>
+        </div>
+        <div class="form-group mt-4">
+          <label for="userid">UserId:</label>
+          <?php echo '<input type="text" class="form-control" id="userid" name="userid" value="' . htmlspecialchars($userid) . '" disabled>' ?>
         </div>
         <div class="form-group">
           <label for="timestamp">Updated:</label>

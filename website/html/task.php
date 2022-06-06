@@ -7,10 +7,10 @@
 ?>
 <?php
   $taskid = $_GET["taskid"];
-  $dbstmt = mysqli_prepare($db, "SELECT TIMESTAMP, TITLE, DESCRIPTION, DONE, USER_ID FROM TASK WHERE TASK_ID=?");
+  $dbstmt = mysqli_prepare($db, "SELECT USER_ID, TIMESTAMP, TITLE, DESCRIPTION, DONE FROM TASK WHERE TASK_ID=?");
   mysqli_stmt_bind_param($dbstmt, "s", $taskid);
   mysqli_stmt_execute($dbstmt);
-  mysqli_stmt_bind_result($dbstmt, $timestamp, $title, $description, $done, $userid);
+  mysqli_stmt_bind_result($dbstmt, $userid, $timestamp, $title, $description, $done);
   mysqli_stmt_fetch($dbstmt) or die('Error querying database.');
   mysqli_stmt_close($dbstmt);
 ?>
@@ -43,8 +43,12 @@
       </p>
       <table class="table my-4">
         <tr>
-          <th>ID</th>
+          <th>TaskId</th>
           <td><?php echo htmlspecialchars($taskid) ?></td>
+        </tr>
+        <tr>
+          <th>UserId</th>
+          <td><?php echo htmlspecialchars($userid) ?></td>
         </tr>
         <tr>
           <th>Updated</th>
