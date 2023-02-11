@@ -12,7 +12,7 @@ $ mkdir data
 $ chmod 777 data
 $ docker run -d --name sample-mariadb --rm \
   --network backend \
-  -v "$(pwd)/data:/var/lib/mysql" \
+  -v ./data:/var/lib/mysql \
   -e MARIADB_ROOT_PASSWORD=sesam \
   -e MARIADB_DATABASE=sample \
   -e MARIADB_USER=sample \
@@ -31,7 +31,7 @@ $ docker build -t sample-php:7.2-apache website/
 $ docker run -d --name sample-php --rm \
   --network backend \
   -p 8080:80 \
-  -v "$(pwd)/website/html:/var/www/html:ro" \
+  -v ./website/html:/var/www/html:ro \
   sample-php:7.2-apache
 ~~~
 
